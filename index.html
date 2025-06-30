@@ -1,9 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Portfolio</title>
-  </head>
-  <body></body>
+    <!--
+        เรียกใช้งาน Tailwind CSS จาก CDN (Content Delivery Network)
+        เป็นเครื่องมือที่ช่วยในการออกแบบและจัดสไตล์หน้าเว็บ
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter และ Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- ลิงก์ไปยังไฟล์ CSS ภายนอกสำหรับสไตล์ที่กำหนดเอง -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-gray-800">
+
+    <!-- ส่วนหัวและแถบนำทาง -->
+    <header class="bg-blue-600 shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-center items-center">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- ลิงก์นำทางไปยังส่วนต่างๆ ของเว็บไซต์ -->
+                    <a href="#home" class="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm sm:text-base font-medium transition active">หน้าแรก</a>
+                    <a href="#experience" class="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm sm:text-base font-medium transition">ประสบการณ์</a>
+                    <a href="#gallery" class="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm sm:text-base font-medium transition">แกลเลอรี่</a>
+                    <a href="#contact" class="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm sm:text-base font-medium transition">ติดต่อ</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- พื้นที่เนื้อหาหลัก -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- เนื้อหาของหน้าจะถูกโหลดเข้ามาที่นี่ -->
+        <div id="page-container"></div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // เลือกองค์ประกอบลิงก์นำทางทั้งหมด
+            const navLinks = document.querySelectorAll('.nav-link');
+            // เลือกคอนเทนเนอร์ที่จะแสดงเนื้อหาหน้า
+            const pageContainer = document.getElementById('page-container');
+
+            // ฟังก์ชันสำหรับโหลดเนื้อหาหน้าเว็บแบบไดนามิก
+            async function loadPage(pageName) {
+                try {
+                    // ดึงเนื้อหา HTML จากไฟล์แยก
+                    const response = await fetch(`${pageName}.html`);
+                    if (!response.ok) {
+                        // ตรวจสอบว่าการตอบกลับเป็นไปตามที่คาดหวังหรือไม่
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const content = await response.text(); // แปลงการตอบกลับเป็นข้อความ
+                    pageContainer.innerHTML = content; // แทรกเนื้อหาลงในคอนเทนเนอร์
+                    // เพิ่มคลาส 'active' เพื่อให้เกิดแอนิเมชั่นหลังโหลดเนื้อหา
+                    pageContainer.querySelector('.page-content').classList.add('active');
+                } catch (error) {
+                    console.error('Error loading page:', error);
+                    pageContainer.innerHTML = `<p class="text-red-500 text-center">ไม่สามารถโหลดเนื้อหาสำหรับ ${pageName} ได้</p>`;
+                }
+            }
+
+            // ฟังก์ชันสำหรับจัดการการนำทาง
+            function navigateTo(hash) {
+                let pageName = hash.substring(1); // ลบ '#' ออกจาก hash
+                if (!pageName) {
+                    pageName = 'home'; // ตั้งค่าเริ่มต้นเป็น 'home' หาก hash ว่างเปล่า
+                }
+
+                // ลบคลาส 'active' ออกจากเนื้อหาหน้าเดิมเพื่อเริ่มแอนิเมชั่น fade out
+                const currentPageContent = pageContainer.querySelector('.page-content');
+                if (currentPageContent) {
+                    currentPageContent.classList.remove('active');
+                    // หน่วงเวลาเล็กน้อยก่อนโหลดเนื้อหาใหม่เพื่อให้เกิดเอฟเฟกต์ fade out
+                    setTimeout(() => {
+                        loadPage(pageName);
+                    }, 200); // ปรับเวลาหน่วงได้ตามความเหมาะสมเพื่อให้การเปลี่ยนผ่านราบรื่น
+                } else {
+                    // โหลดหน้าทันทีหากไม่มีเนื้อหาหน้าปัจจุบัน
+                    loadPage(pageName);
+                }
+
+                // อัปเดตสถานะ 'active' ในแถบนำทาง
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            // เพิ่ม event listener สำหรับการคลิกที่ลิงก์นำทางทั้งหมด
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); // ป้องกันการทำงานเริ่มต้นของลิงก์ (ไม่ให้รีโหลดหน้า)
+                    const targetHash = this.getAttribute('href'); // รับค่า href ของลิงก์ที่คลิก
+                    navigateTo(targetHash); // เรียกฟังก์ชันนำทาง
+                    // อัปเดต URL hash โดยไม่รีโหลดหน้า
+                    history.pushState(null, null, targetHash);
+                });
+            });
+
+            // จัดการปุ่มย้อนกลับ/ไปข้างหน้าของเบราว์เซอร์
+            window.addEventListener('popstate', function() {
+                navigateTo(location.hash); // นำทางไปยัง hash ปัจจุบันของ URL
+            });
+
+            // โหลดหน้าเริ่มต้นตาม URL hash เมื่อโหลดหน้าครั้งแรก
+            navigateTo(location.hash);
+        });
+    </script>
+</body>
 </html>

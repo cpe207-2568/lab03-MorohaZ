@@ -1,0 +1,25 @@
+/* สไตล์ที่กำหนดเอง */
+body {
+    font-family: 'Sarabun', 'Inter', sans-serif; /* กำหนดฟอนต์หลัก */
+    background-color: #f0f2f5; /* กำหนดสีพื้นหลัง */
+}
+
+/* สไตล์สำหรับลิงก์นำทางที่กำลังทำงานอยู่ (active) */
+.nav-link.active {
+    color: #ffffff; /* สีข้อความเป็นสีขาว */
+    background-color: #1d4ed8; /* สีพื้นหลังเป็นสีน้ำเงินเข้ม */
+}
+
+/* สไตล์การเปลี่ยนผ่านอย่างง่ายสำหรับเนื้อหาหน้า */
+.page-content {
+    /* ซ่อนเนื้อหาเริ่มต้น */
+    opacity: 0; /* ตั้งค่าความทึบแสงเป็น 0 */
+    transform: translateY(10px); /* เลื่อนลง 10px */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* กำหนดการเปลี่ยนผ่านสำหรับความทึบแสงและการเลื่อน */
+}
+
+/* แสดงเนื้อหาพร้อมแอนิเมชั่นเมื่อมีคลาส 'active' */
+.page-content.active {
+    opacity: 1; /* ทำให้เนื้อหาปรากฏ */
+    transform: translateY(0); /* เลื่อนกลับไปที่ตำแหน่งเดิม */
+}
